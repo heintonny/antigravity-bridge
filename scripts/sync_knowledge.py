@@ -44,8 +44,20 @@ def read_ki_summaries(knowledge_dir: str) -> list[dict]:
         if not meta_path.exists():
             continue
 
-        with open(meta_path) as f:
-            meta = json.load(f)
+        try:
+            with open(meta_path) as f:
+                meta = json.load(f)
+        except json.JSONDecodeError:
+            # Some metadata files have trailing markdown artifacts
+            with open(meta_path) as f:
+                raw = f.read().strip()
+            # Try to extract valid JSON
+            try:
+                # Find the last closing brace
+                last_brace = raw.rindex("}")
+                meta = json.loads(raw[:last_brace + 1])
+            except (ValueError, json.JSONDecodeError):
+                continue
 
         updated = ""
         if ts_path.exists():

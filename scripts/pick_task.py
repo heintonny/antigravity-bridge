@@ -79,8 +79,16 @@ def collect_ki_topics(knowledge_dir: str) -> list[str]:
             continue
         meta_path = topic_dir / "metadata.json"
         if meta_path.exists():
-            with open(meta_path) as f:
-                meta = json.load(f)
+            try:
+                with open(meta_path) as f:
+                    meta = json.load(f)
+            except json.JSONDecodeError:
+                with open(meta_path) as f:
+                    raw = f.read().strip()
+                try:
+                    meta = json.loads(raw[:raw.rindex("}") + 1])
+                except (ValueError, json.JSONDecodeError):
+                    continue
             topics.append(f"{topic_dir.name}: {meta.get('title', '')}")
     return topics
 
