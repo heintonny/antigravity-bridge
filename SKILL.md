@@ -1,6 +1,6 @@
 ---
 name: antigravity-bridge
-version: 1.2.0
+version: 1.2.1
 description: >-
   Bidirectional knowledge bridge between OpenClaw and Google Antigravity IDE.
   Sync Knowledge Items, tasks, memory, and lessons learned across both agent systems.
@@ -110,23 +110,52 @@ Show what changed in tasks since last sync:
 python3 scripts/diff_tasks.py
 ```
 
-### Pick Task (`pick-task`)
+### Next Task (`pick-task`) — mirrors Antigravity's /next-task
 
-Select the next available task and prepare a coding sub-agent:
+Gather project context for intelligent task selection:
 
 ```bash
 python3 scripts/pick_task.py
 ```
 
-What it does:
-1. Reads `.agent/tasks.md` and finds `[ ]` (todo) tasks
-2. Marks the selected task as `[>]` (active)
-3. Collects relevant rules, skills, memory, and KIs
-4. Outputs a task brief for spawning a coding sub-agent
+This outputs **structured JSON context** (does NOT modify tasks.md). The agent uses this to reason.
 
-After the sub-agent completes:
-- Task is marked `[x]` (done) in tasks.md
-- Next logical task is marked `[>]`
+**Agent workflow after running pick-task:**
+
+1. Read the JSON output (tasks, git log, sessions, memory)
+2. Analyze:
+   - Active `[>]` tasks that need finishing
+   - Session handoffs (continuation prompts from Antigravity)
+   - Recent commits (what was just worked on)
+   - Phase dependencies (what's unblocked)
+3. Recommend **2-3 tasks** to the user with:
+   - Context: why this task now
+   - Scope: what's involved
+   - Effort: Small / Medium / Large
+4. Present as numbered options:
+   ```
+   🎯 Recommended Next Tasks — Reply 1, 2, or 3
+
+   ### Option 1: [Task Name] ⭐
+   - Context: ...
+   - Scope: ...
+   - Effort: Medium
+
+   ### Option 2: [Task Name]
+   ...
+   ```
+5. User picks → agent marks task `[>]` in tasks.md
+6. Agent spawns coding sub-agent with task brief (rules + relevant memory + KIs)
+7. After completion: mark `[x]`, run self-improve
+
+**Priority criteria (in order):**
+1. Active but incomplete (`[>]` tasks)
+2. Unblocking (enables other work)
+3. Quick wins (low effort, high value)
+4. Technical debt (flagged in audits/lessons)
+5. Natural progression (next step in current phase)
+
+**The script gathers data. The agent thinks. The user decides.**
 
 ### Self-Improve (`self-improve`)
 
