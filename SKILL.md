@@ -1,18 +1,22 @@
 ---
 name: antigravity-bridge
-version: 1.2.1
+version: 1.2.2
 description: >-
-  Bidirectional knowledge bridge between OpenClaw and Google Antigravity IDE.
-  Sync Knowledge Items, tasks, memory, and lessons learned across both agent systems.
+  One-directional knowledge bridge from Google Antigravity IDE to OpenClaw.
+  Keeps the OpenClaw agent informed about project development without replacing
+  Antigravity as the primary coding agent. Antigravity has deep codebase awareness
+  (IDE, LSP, vectors, code tracker, annotations) — OpenClaw has breadth (24/7 availability,
+  cross-project awareness, business ops, monitoring, communications).
+  The bridge syncs: Knowledge Items, tasks (.agent/tasks.md), lessons learned
+  (.agent/memory/), rules, skills, workflows, and session handoffs.
   Use when: (1) syncing Antigravity knowledge to OpenClaw context,
-  (2) picking up tasks from .agent/tasks.md for coding sub-agents,
+  (2) analyzing tasks for next-task recommendations,
   (3) running cross-agent self-improve (updates both systems),
   (4) checking what Antigravity sessions produced,
-  (5) creating session handoffs between agents,
-  (6) user says "sync antigravity", "pick task", "what did antigravity do",
-  "self-improve", "bridge sync", or "antigravity status".
-  NOT for: Antigravity model/provider configuration (use google-antigravity-auth plugin),
-  or starting the Antigravity IDE (use `agy` CLI directly).
+  (5) user says "sync antigravity", "pick task", "what did antigravity do",
+  "bridge sync", or "antigravity status".
+  NOT for: primary coding (use Antigravity), model/provider config,
+  or starting the IDE (use `agy` CLI).
 homepage: https://github.com/heintonny/antigravity-bridge
 metadata: {"openclaw":{"emoji":"🌉","tags":["antigravity","gemini","knowledge-sync","multi-agent","bridge","ide","tasks","coding"]}}
 ---
